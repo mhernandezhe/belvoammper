@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { fetchTransactions } from './components/api.js';
 import EnhancedCharts from './components/EnhancedCharts';
-import { Button, Container, Grid, Box, Typography, CircularProgress } from '@mui/material';
+import { Button, Container, Grid, Box, Typography, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 
 const TransactionsComponent = () => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [view, setView] = useState('transactions'); // Estado para gestionar la vista actual
+  const [sortField, setSortField] = useState('id'); // Campo de ordenamiento
+  const [sortOrder, setSortOrder] = useState('asc'); // Orden: 'asc' o 'desc'
 
   useEffect(() => {
     const getTransactions = async () => {
@@ -24,6 +26,21 @@ const TransactionsComponent = () => {
 
     getTransactions();
   }, []);
+
+  const sortTransactions = (field) => {
+    return [...transactions].sort((a, b) => {
+      if (a[field] < b[field]) return sortOrder === 'asc' ? -1 : 1;
+      if (a[field] > b[field]) return sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
+  };
+
+  const handleSort = (field) => {
+    setSortField(field);
+    setSortOrder(prevOrder => prevOrder === 'asc' ? 'desc' : 'asc');
+  };
+
+  const sortedTransactions = sortTransactions(sortField);
 
   if (loading) return <CircularProgress />;
   if (error) return <Typography color="error">Error loading transactions: {error.message}</Typography>;
@@ -60,40 +77,52 @@ const TransactionsComponent = () => {
           <Typography variant="h4" gutterBottom>
             Transactions
           </Typography>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Account Name</th>
-                <th>Institution</th>
-                <th>Type</th>
-                <th>Amount</th>
-                <th>Currency</th>
-                <th>Description</th>
-                <th>Value Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {transactions.length > 0 ? (
-                transactions.map((transaction) => (
-                  <tr key={transaction.id}>
-                    <td>{transaction.id}</td>
-                    <td>{transaction.account.name}</td>
-                    <td>{transaction.account.institution.name}</td>
-                    <td>{transaction.type}</td>
-                    <td>{transaction.amount}</td>
-                    <td>{transaction.currency}</td>
-                    <td>{transaction.description}</td>
-                    <td>{transaction.value_date}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="8">No transactions available</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          <Box mb={2}>
+            <Button variant="outlined" onClick={() => handleSort('id')}>Sort by ID</Button>
+            <Button variant="outlined" onClick={() => handleSort('account.name')}>Sort by Account Name</Button>
+            <Button variant="outlined" onClick={() => handleSort('account.institution.name')}>Sort by Institution</Button>
+            <Button variant="outlined" onClick={() => handleSort('type')}>Sort by Type</Button>
+            <Button variant="outlined" onClick={() => handleSort('amount')}>Sort by Amount</Button>
+            <Button variant="outlined" onClick={() => handleSort('currency')}>Sort by Currency</Button>
+            <Button variant="outlined" onClick={() => handleSort('description')}>Sort by Description</Button>
+            <Button variant="outlined" onClick={() => handleSort('value_date')}>Sort by Value Date</Button>
+          </Box>
+          <TableContainer component={Paper}>
+            <Table style={{ width: '100%' }}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>ID</TableCell>
+                  <TableCell>Account Name</TableCell>
+                  <TableCell>Institution</TableCell>
+                  <TableCell>Type</TableCell>
+                  <TableCell>Amount</TableCell>
+                  <TableCell>Currency</TableCell>
+                  <TableCell>Description</TableCell>
+                  <TableCell>Value Date</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {sortedTransactions.length > 0 ? (
+                  sortedTransactions.map((transaction) => (
+                    <TableRow key={transaction.id}>
+                      <TableCell>{transaction.id}</TableCell>
+                      <TableCell>{transaction.account.name}</TableCell>
+                      <TableCell>{transaction.account.institution.name}</TableCell>
+                      <TableCell>{transaction.type}</TableCell>
+                      <TableCell>{transaction.amount}</TableCell>
+                      <TableCell>{transaction.currency}</TableCell>
+                      <TableCell>{transaction.description}</TableCell>
+                      <TableCell>{transaction.value_date}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center">No transactions available</TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Box>
       )}
 
