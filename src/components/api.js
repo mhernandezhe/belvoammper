@@ -1,14 +1,28 @@
+// ./components/api.js
 import axios from 'axios';
 
-const BASE_URL = 'https://api.belvo.com';
-const REACT_APP_BELVO_CLIENT_ID= '7d7af145-eb77-46b5-98de-b0f31c6780f4';
-const REACT_APP_BELVO_CLIENT_SECRET= 'Xaj-ri957J3wnBgHlX_NA*tt*t_6z38V4gMhDqHAbHyy65i_DPMTxdxTtMlI9v*4'
+const BASE_URL = 'https://sandbox.belvo.com/api'; // Reemplaza con tu URL base
+const API_TOKEN = '848db9af-c89a-40e9-afcd-c599b438a65e:DqgFcXMIQ7Z7cBu#Po#6yUgD7aqn9y_NlAulP_X6hhyk9rAw1EtAj_NF3yYp@Nf2'; // Reemplaza con tu token
 
-export const getTransactions = async () => {
-  const response = await axios.get(`${BASE_URL}/transactions`, {
-    headers: {
-      'Authorization': `Bearer ${REACT_APP_BELVO_CLIENT_ID}:${REACT_APP_BELVO_CLIENT_SECRET}`
-    }
-  });
-  return response.data;
+export const fetchTransactions = async () => {
+  try {
+    const config = {
+      method: 'get',
+      url: `${BASE_URL}/transactions/`, // Cambiado a 'transactions/' para la solicitud requerida
+      params: {
+        page: 1,
+        link: "61471984-bf6d-43c6-a5d9-08364ed86ede"
+      },
+      headers: {
+        Authorization: `Basic ${btoa(API_TOKEN)}` // Codifica el token en base64 para Basic Auth
+      }
+    };
+
+    const response = await axios.request(config);
+    //console.log('Fetched transactions:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching transactions:', error);
+    throw error;
+  }
 };

@@ -1,44 +1,50 @@
-import React from 'react';
-import { useTable } from 'react-table';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-const TransactionsTable = ({ data }) => {
-  const columns = React.useMemo(
-    () => [
-      { Header: 'Date', accessor: 'date' },
-      { Header: 'Amount', accessor: 'amount' },
-      { Header: 'Category', accessor: 'category' },
-      { Header: 'Type', accessor: 'type' }
-    ],
-    []
-  );
+const TransactionTable = () => {
+    const [transactions, setTransactions] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data });
+    useEffect(() => {
+      
 
-  return (
-    <table {...getTableProps()}>
-      <thead>
-        {headerGroups.map(headerGroup => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map(column => (
-              <th {...column.getHeaderProps()}>{column.render('Header')}</th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody {...getTableBodyProps()}>
-        {rows.map(row => {
-          prepareRow(row);
-          return (
-            <tr {...row.getRowProps()}>
-              {row.cells.map(cell => (
-                <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-              ))}
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
-  );
+        fetchTransactions();
+    }, []);
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error}</p>;
+
+    if (transactions.length === 0) {
+        return <p>No transactions savailable</p>;
+        console.log(transactions);
+    }
+
+    // Extract columns from the first transaction
+    const columns = Object.keys(transactions[0]);
+
+    return (
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        {columns.map((col) => (
+                            <th key={col}>{col}</th>
+                        ))}
+                    </tr>
+                </thead>
+                <tbody>
+                    {transactions.map((transaction, index) => (
+                        <tr key={index}>
+                            {columns.map((col) => (
+                                <td key={col}>{JSON.stringify(transaction[col])}</td>
+                            ))}
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
 };
 
-export default TransactionsTable;
+export default TransactionTable;
