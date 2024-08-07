@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-
-
-// Suponiendo que fetchTransactions está en el archivo api.js
 import { fetchTransactions } from './components/api.js'; // Actualiza la importación
+import Charts from './components/Charts.js'; // Asegúrate de que la ruta sea correcta
 
 const TransactionsComponent = () => {
   const [transactions, setTransactions] = useState([]);
@@ -13,8 +11,8 @@ const TransactionsComponent = () => {
     const getTransactions = async () => {
       try {
         const data = await fetchTransactions();
-       // console.log('Data from API:', data); // Verifica la estructura de los datos aquí
-        setTransactions(data.transactions || data); // Ajusta según la estructura de datos
+        // console.log('Data from API:', data); // Verifica la estructura de los datos aquí
+        setTransactions(data.transactions || data.results || data); // Ajusta según la estructura de datos
         setLoading(false);
       } catch (err) {
         console.error('Error fetching transactions:', err);
@@ -46,8 +44,8 @@ const TransactionsComponent = () => {
           </tr>
         </thead>
         <tbody>
-          {transactions.results && transactions.results.length > 0 ? (
-            transactions.results.map((transaction) => (
+          {transactions.length > 0 ? (
+            transactions.map((transaction) => (
               <tr key={transaction.id}>
                 <td>{transaction.id}</td>
                 <td>{transaction.account.name}</td>
@@ -66,6 +64,8 @@ const TransactionsComponent = () => {
           )}
         </tbody>
       </table>
+      {/* Añade el componente Charts aquí */}
+      {transactions.length > 0 && <Charts data={transactions} />}
     </div>
   );
 };
