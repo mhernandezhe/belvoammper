@@ -21,7 +21,7 @@ const EnhancedCharts = ({ data, view }) => {
     yAxis: {
       title: { text: 'Monto' },
       labels: {
-        format: '${value}',
+        format: "${value}",
       }
     },
     tooltip: {
@@ -66,7 +66,7 @@ const EnhancedCharts = ({ data, view }) => {
     yAxis: {
       title: { text: 'Amount' },
       labels: {
-        format: '${value}',
+        format: "${value}",
       }
     },
     tooltip: {
