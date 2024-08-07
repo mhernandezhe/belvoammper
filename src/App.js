@@ -1,23 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import { getTransactions } from './components/api.js';
+import TransactionsTable from './components/TransactionsTable';
+import Charts from './components/Charts.js';
 
 function App() {
+  const [transactions, setTransactions] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getTransactions();
+        setTransactions(data);
+      } catch (error) {
+        console.error('Error fetching transactions:', error.message);
+        setError('Error fetching transactions. Please try again later.');
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Bank Transactions</h1>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {transactions.length > 0 ? (
+        <>
+          <TransactionsTable data={transactions} />
+          <Charts data={transactions} />
+        </>
+      ) : (
+        !error && <p>Loading data...</p>
+      )}
     </div>
   );
 }
