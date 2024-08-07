@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+
 
 // Suponiendo que fetchTransactions está en el archivo api.js
 import { fetchTransactions } from './components/api.js'; // Actualiza la importación
