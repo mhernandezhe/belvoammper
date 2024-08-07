@@ -2,8 +2,3 @@
   command = "npm run build"
   publish = "build"
 
-[[redirects]]
-  from = "/api/*"
-  to = "https://api.belvo.com/:splat"
-  headers = {X-Proxy-Authorization = "Bearer Xaj-ri957J3wnBgHlX_NA*tt*t_6z38V4gMhDqHAbHyy65i_DPMTxdxTtMlI9v*"}
-  status = 200
